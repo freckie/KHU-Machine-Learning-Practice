@@ -25,14 +25,13 @@ class Model(torch.nn.Module):
         self.l3 = torch.nn.Linear(4, 1)
 
         # 활성함수로 sigmoid 함수 설정.
-        self.sigmoid = torch.nn.Sigmoid()
+        self.actv = torch.nn.ReLU()
 
     # 예측 함수.
     def forward(self, x):
-        # y = sigmoid(sigmoid(sigmoid(x)))
-        out1 = self.sigmoid(self.l1(x))
-        out2 = self.sigmoid(self.l2(out1))
-        y_pred = self.sigmoid(self.l3(out2))
+        out1 = self.actv(self.l1(x))
+        out2 = self.actv(self.l2(out1))
+        y_pred = self.actv(self.l3(out2))
         return y_pred
 
 
