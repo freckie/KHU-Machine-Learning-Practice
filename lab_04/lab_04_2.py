@@ -24,7 +24,7 @@ class Model(torch.nn.Module):
         self.l2 = torch.nn.Linear(6, 4)
         self.l3 = torch.nn.Linear(4, 1)
 
-        # 활성함수로 sigmoid 함수 설정.
+        # 활성함수로 relu 함수 설정.
         self.actv = torch.nn.ReLU()
 
     # 예측 함수.
