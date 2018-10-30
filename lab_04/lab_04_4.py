@@ -19,12 +19,11 @@ class Model(torch.nn.Module):
         """
         super(Model, self).__init__()
 
-        # 3개의 layer를 세팅. (8->6->1)
         self.l1 = torch.nn.Linear(8, 2)
         self.l2 = torch.nn.Linear(2, 1)
 
-        # 활성함수로 relu 함수 설정.
-        self.actv = torch.nn.Softplus()
+        # 활성함수 설정.
+        self.actv = torch.nn.Sigmoid()
 
     # 예측 함수.
     def forward(self, x):
@@ -37,8 +36,8 @@ model = Model()
 
 # loss로 BCE 사용.
 criterion = torch.nn.BCELoss(size_average=True)
-# 최적화 방식으로 SGD 사용, 학습률=0.1.
-optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
+# 최적화 방식으로 Adam 사용, 학습률=0.1.
+optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
 
 # 학습 메인 루프.
 loss_list = list()
