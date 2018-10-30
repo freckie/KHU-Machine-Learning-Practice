@@ -180,6 +180,7 @@ class Model_8(torch.nn.Module):
         return y_pred
 
 
+iter_max = 1000
 loss_lists = list()
 model_list = [Model_1(), Model_2(), Model_3(), Model_4(), Model_5(), Model_6(), Model_7(), Model_8()]
 for model in tqdm(model_list):
@@ -190,7 +191,7 @@ for model in tqdm(model_list):
 
     # 학습 메인 루프.
     loss_list = list()
-    for epoch in range(100):
+    for epoch in range(iter_max):
         # x를 생성한 모델을 통해 예측.
         y_pred = model(x_data)
         # loss를 계산.
@@ -208,14 +209,14 @@ for model in tqdm(model_list):
     loss_lists.append(loss_list)
 
 
-plt.plot(range(100), loss_lists[0], label='Model 1) 6-6-6-4-4-4')
-plt.plot(range(100), loss_lists[1], label='Model 2) 6-6-4-4')
-plt.plot(range(100), loss_lists[2], label='Model 3) 8-6')
-plt.plot(range(100), loss_lists[3], label='Model 4) 4-2')
-plt.plot(range(100), loss_lists[4], label='Model 5) 8')
-plt.plot(range(100), loss_lists[5], label='Model 6) 6')
-plt.plot(range(100), loss_lists[6], label='Model 7) 4')
-plt.plot(range(100), loss_lists[7], label='Model 8) 2')
+plt.plot(range(iter_max), loss_lists[0], label='Model 1) 6-6-6-4-4-4')
+plt.plot(range(iter_max), loss_lists[1], label='Model 2) 6-6-4-4')
+plt.plot(range(iter_max), loss_lists[2], label='Model 3) 8-6')
+plt.plot(range(iter_max), loss_lists[3], label='Model 4) 4-2')
+plt.plot(range(iter_max), loss_lists[4], label='Model 5) 8')
+plt.plot(range(iter_max), loss_lists[5], label='Model 6) 6')
+plt.plot(range(iter_max), loss_lists[6], label='Model 7) 4')
+plt.plot(range(iter_max), loss_lists[7], label='Model 8) 2')
 plt.xlabel('iteration')
 plt.ylabel('loss')
 plt.legend(loc='upper right')
