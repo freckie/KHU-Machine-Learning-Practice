@@ -29,31 +29,37 @@ class Generator(nn.Module):
 
     def forward(self, x):
         x = x.view(x.size(0), 100)
-        batch_size = x.size(0)
-        out = self.model(x)
-        return out.view(batch_size, 1, 28, 28)
+        return self.model(x)
 
 
 # 분별기
 class Discriminator(nn.Module):
     def __init__(self):
         super(Discriminator, self).__init__()
-        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
-        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
-        self.mp = nn.MaxPool2d(2)
-        self.relu = nn.ReLU(inplace=True)
-        self.fc1 = nn.Linear(320, 10)
-        self.fc2 = nn.Linear(10, 1)
-        self.sigmoid = nn.Sigmoid()
-        
+        self.model = nn.Sequential(
+            # nn.Conv2d(1, 10, kernel_size=5),
+            # nn.MaxPool2d(2),
+            # nn.ReLU(inplace=True),
+            # nn.Conv2d(10, 20, kernel_size=5),
+            # nn.MaxPool2d(2),
+            # nn.ReLU(inplace=True),
+            # nn.Linear(320, 10),
+            # nn.LogSoftmax()
+            nn.Linear(1 * 28 * 28, 1024),
+            nn.ReLU(inplace=True),
+            nn.Linear(1024, 512),
+            nn.ReLU(inplace=True),
+            nn.Linear(512, 256),
+            nn.ReLU(inplace=True),
+            nn.Linear(256, 1),
+            nn.Sigmoid()
+        )
         
     def forward(self, x):
-        x = x.view(x.size(0), 1, 28, 28)
-        x = self.relu(self.mp(self.conv1(x)))
-        x = self.relu(self.mp(self.conv2(x)))
-        x = x.view(x.size(0), 320)
-        x = self.fc2(self.fc1(x))
-        return self.sigmoid(x)
+        # x의 shape를 batch_size * 28 * 28로 변경
+        x = x.view(x.size(0), 28 * 28)
+        out = self.model(x)
+        return out.view(out.size(0), -1)
 
 
 # 분별기(D) 트레이닝
@@ -122,7 +128,7 @@ if __name__ == '__main__':
     optim_D = optim.Adam(model_D.parameters())
 
     # 학습
-    epochs = 8
+    epochs = 10
     for epoch in range(epochs):
         for batch_idx, (data, target) in enumerate(train_loader):
             data, target = Variable(data), Variable(target)
@@ -148,6 +154,7 @@ if __name__ == '__main__':
             if batch_idx % 10 == 0:
                 logger.info('Epoch {} [{}/{} ({:.0f}%)] loss_D: {:.6f} / loss_G: {:.6f}'.format(
                     epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader), loss_D.data[0], loss_G.data[0]))
+
 
     test_noise = Variable(torch.randn(1, 100))
     test_data = model_G(test_noise)
