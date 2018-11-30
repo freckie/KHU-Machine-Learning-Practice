@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 class Generator(nn.Module):
     def __init__(self):
         super(Generator, self).__init__()
+        # 생성기 모델
         self.model = nn.Sequential(
             nn.Linear(100, 256),
             nn.ReLU(inplace=True),
@@ -36,15 +37,8 @@ class Generator(nn.Module):
 class Discriminator(nn.Module):
     def __init__(self):
         super(Discriminator, self).__init__()
+        # 분별기 모델
         self.model = nn.Sequential(
-            # nn.Conv2d(1, 10, kernel_size=5),
-            # nn.MaxPool2d(2),
-            # nn.ReLU(inplace=True),
-            # nn.Conv2d(10, 20, kernel_size=5),
-            # nn.MaxPool2d(2),
-            # nn.ReLU(inplace=True),
-            # nn.Linear(320, 10),
-            # nn.LogSoftmax()
             nn.Linear(1 * 28 * 28, 1024),
             nn.ReLU(inplace=True),
             nn.Linear(1024, 512),
@@ -128,7 +122,7 @@ if __name__ == '__main__':
     optim_D = optim.Adam(model_D.parameters())
 
     # 학습
-    epochs = 10
+    epochs = 50
     for epoch in range(epochs):
         for batch_idx, (data, target) in enumerate(train_loader):
             data, target = Variable(data), Variable(target)
@@ -155,10 +149,14 @@ if __name__ == '__main__':
                 logger.info('Epoch {} [{}/{} ({:.0f}%)] loss_D: {:.6f} / loss_G: {:.6f}'.format(
                     epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader), loss_D.data[0], loss_G.data[0]))
 
+    # 학습된 모델 저장
+    torch.save(model_G.state_dict(), './gan_generator_mnist.pth')
 
+    # 테스트용 노이즈 생성 후 G에 입력
     test_noise = Variable(torch.randn(1, 100))
     test_data = model_G(test_noise)
-    print(model_D(test_data))
+
+    # 생성된 테스트용 샘플을 28*28로 변환 후 plot
     new_data = test_data.view(1, 28, 28)
     tensor_to_img = transforms.ToPILImage()
     plt.imshow(transforms.functional.to_pil_image(new_data))
